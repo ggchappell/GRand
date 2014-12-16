@@ -1,7 +1,7 @@
 // grand.h
-// VERSION 1.1.1
+// VERSION 1.1.2 (UNFINISHED)
 // Glenn G. Chappell
-// 27 Sep 2014
+// 15 Dec 2014
 //
 // Header for class GRand
 // Allows easy pseudorandom number generation
@@ -52,7 +52,7 @@ EXAMPLE USAGE
 
 // Version number
 // Guaranteed to increase with with each release.
-#define GRAND_PACKAGE_VERSION (10101)  // 1 01 01 means 1.1.1
+#define GRAND_PACKAGE_VERSION (10102)  // 1 01 02 means 1.1.2
 
 
 // class GRand
@@ -208,8 +208,8 @@ private:
     {
         if (!_seed_needed)
             return;
-        _seed_needed = false;
         _rng.seed(rng_type::result_type(std::random_device()()));
+        _seed_needed = false;
     }
 
 // ***** GRand: data members *****
