@@ -1,7 +1,7 @@
 // grand.h
 // VERSION 1.1.2 (UNFINISHED)
 // Glenn G. Chappell
-// 15 Dec 2014
+// 13 Jan 2015
 //
 // Header for class GRand
 // Allows easy pseudorandom number generation
@@ -49,6 +49,12 @@ EXAMPLE USAGE
 //   std::uniform_int_distribution
 //   std::uniform_real_distribution
 //   std::bernoulli_distribution
+#include <type_traits>
+// For:
+//   std::common_type
+#include <limits>
+// For:
+//   std::numeric_limits
 
 // Version number
 // Guaranteed to increase with with each release.
@@ -114,7 +120,7 @@ public:
     // Return random integer in range [0, n-1], or 0 if n <= 0. Range is
     //  {0, 1} if no parameter given.
     int i(int n=2)
-    { return operator()(n); }
+    { return (n <= 1) ? 0 : rand_integer(n); }
 
     // d
     // Return random double in range [0.0, d) if d > 0.0, in range
@@ -174,19 +180,35 @@ public:
 
     // operator() - one argument
     // Return random integer in range [0, n-1], or 0 if n <= 0.
-    // Template so that any reasonable argument type gives no warnings.
     // Requirements on Types:
-    //     IntType must be an integer type.
-    // NOTE: This is also used to implement member function i(n).
+    //     IntType must be convertible to unsigned long long.
+    //     unsigned long long must be convertible to IntType.
+#define GRAND_OP_PAREN(T) T operator()(T n) \
+{ return (n <= (T)(1)) ? (T)(0) : rand_integer(n); }
+        // GRAND_OP_PAREN is internal-use only; #undef'd at end of file
+    GRAND_OP_PAREN(short)
+    GRAND_OP_PAREN(int)
+    GRAND_OP_PAREN(long)
+    GRAND_OP_PAREN(long long)
+    GRAND_OP_PAREN(unsigned short)
+    GRAND_OP_PAREN(unsigned int)
+    GRAND_OP_PAREN(unsigned long)
+    GRAND_OP_PAREN(unsigned long long)
     template <typename IntType>
     IntType operator()(IntType n)
     {
-        ck_seed();
-        if (n <= IntType(0)) return IntType(0);
-        return std::uniform_int_distribution<IntType>(
-            IntType(0),
-            n-IntType(1))
-                (_rng);
+        if (n <= IntType(1)) return IntType(0);
+        typedef typename
+            std::common_type<IntType, unsigned long long>::type TT;
+        // Explicit type promotion avoids signed/unsigned warnings.
+        if (TT(n) <= TT(std::numeric_limits<unsigned long long>::max))
+            // Above is correct for signed or unsigned n, since n > 0.
+            return IntType(rand_integer((unsigned long long)(n)));
+        else
+            // If n is too big for (unsigned long long), we do the best
+            //  we can.
+            return IntType(rand_integer(
+                std::numeric_limits<unsigned long long>::max));
     }
 
     // NOTE: An object of type GRand does NOT meet the requirements for
@@ -194,6 +216,27 @@ public:
 
 // ***** GRand: internal-use functions *****
 private:
+
+    // rand_integer
+    // Return random integer in range [0, n-1].
+    // Pre:
+    //     n >= 2.
+    // Requirements on Types:
+    //     IntType must be short, int, long, long long, or the unsigned
+    //      version of one of these (to avoid undefined behavior from
+    //      std::uniform_int_distribution).
+    // This function is used in both i(n) and operator()(n). We avoid
+    // the n <= 1 check here (thus the precondition) so that we can
+    // handle negative n correctly.
+    template <typename IntType>
+    IntType rand_integer(IntType n)
+    {
+        ck_seed();
+        return std::uniform_int_distribution<IntType>(
+            IntType(0),
+            n-IntType(1))
+                (_rng);
+    }
 
     // ck_seed
     // If _seed_needed is true, then do nondeterministic seed and set
@@ -221,6 +264,9 @@ private:
     rng_type _rng;  // Our random-number generator object
 
 };  // End class GRand
+
+// Undefine internal-use-only preprocessor symbols
+#undef GRAND_OP_PAREN
 
 #endif //#ifndef FILE_GRAND_H_INCLUDED
 
