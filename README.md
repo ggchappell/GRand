@@ -1,7 +1,7 @@
 GRand
 =====
 
-Version 1.1.1
+Version 1.1.2
 
 GRand (say Gee-Rand) is a C++ random-number-generation library with a
 simple, easy-to-use interface.
@@ -20,7 +20,8 @@ Features
 Copyright & License
 -------------------
 
-`grand.h` and associated files copyright &copy; 2014 Glenn G. Chappell.
+`grand.h` and associated files copyright &copy; 2014-2015 Glenn G.
+Chappell.
 
 License: MIT. See [`LICENSE`](LICENSE) or
 <http://opensource.org/licenses/MIT>.
@@ -160,9 +161,8 @@ will be thrown if the `GRand` object has not been seeded unpredictably.
 
 In no other cases will any member function throw.
 
-Whenever an exception is thrown, the Basic Guarantee holds. _Note: this
-should be the Strong Guarantee. This is a bug to be fixed in a later
-release._
+Whenever an exception is thrown, the Strong Guarantee holds, as long as
+it holds for the type that originated the exception.
 
 Notes
 -----
