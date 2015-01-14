@@ -1,7 +1,7 @@
 // grand.h
 // VERSION 1.1.2 (UNFINISHED)
 // Glenn G. Chappell
-// 13 Jan 2015
+// 14 Jan 2015
 //
 // Header for class GRand
 // Allows easy pseudorandom number generation
@@ -64,6 +64,21 @@ EXAMPLE USAGE
 // class GRand
 // Good random number generation
 // Convenience wrapper around C++ Standard Library RNG.
+// Exceptions:
+//     Public member functions that take arguments of arbitrary types
+//      (ctor from seed, seed [one parameter], operator() [one
+//      parameter]) will throw what & when an operation on the argument
+//      type throws. No such exceptions will be thrown if the argument
+//      is of a fundamental type.
+//     If the GRand object has been seeded unpredictably (default ctor,
+//      seed [no parameters]), then public member functions that
+//      generate random values (i, d, b, operator()) may throw the
+//      exception thrown by std::random_device on failure. No such
+//      exceptions will be thrown if the GRand object has not been
+//      seeded unpredictably.
+//     In no other cases will any member function throw.
+//     Whenever an exception is thrown, the Strong Guarantee holds, as
+//      long as it holds for the type that originated the exception.
 class GRand {
 
 // ***** GRand: internal-use types *****
@@ -81,10 +96,11 @@ public:
          _rng()
     {}
 
-    // Ctor from number
+    // Ctor from seed (number)
     // Seed RNG with given value.
     // Template so that any reasonable argument type gives no warnings.
     // Requirements on Types:
+    //     SeedType must be copy constructible.
     //     SeedType must be convertible to rng_type::result_type
     //      (guaranteed to be an unsigned integral type).
     template <typename SeedType>
@@ -107,6 +123,7 @@ public:
     // Seed RNG with given value.
     // Template so that any reasonable argument type gives no warnings.
     // Requirements on Types:
+    //     SeedType must be copy constructible.
     //     SeedType must be convertible to rng_type::result_type
     //      (guaranteed to be an unsigned integral type).
     template <typename SeedType>
@@ -124,8 +141,8 @@ public:
 
     // d
     // Return random double in range [0.0, d) if d > 0.0, in range
-    //  (d, 0.0] if d < 0, or 0.0 if d == 0.0. Range is [0.0, 1.0) if no
-    //  parameter given.
+    //  (d, 0.0] if d < 0.0, or 0.0 if d == 0.0. Range is [0.0, 1.0) if
+    //  no parameter given.
     double d(double d=1.0)
     {
         ck_seed();
@@ -159,11 +176,17 @@ public:
     // RandomAccessIterator is the type of the first two arguments of
     // std::shuffle (i.e., pretty much always).
 
+    // Type result_type
+    // Return type of operator() - no parameters.
     typedef rng_type::result_type result_type;
 
+    // min
+    // Minimum return value of operator() - no parameters.
     static result_type min()
     { return rng_type::min(); }
 
+    // max
+    // Maximum return value of operator() - no parameters.
     static result_type max()
     { return rng_type::max(); }
 
@@ -181,6 +204,7 @@ public:
     // operator() - one argument
     // Return random integer in range [0, n-1], or 0 if n <= 0.
     // Requirements on Types:
+    //     IntType must be copy constructible.
     //     IntType must be convertible to unsigned long long.
     //     unsigned long long must be convertible to IntType.
 #define GRAND_OP_PAREN(T) T operator()(T n) \
