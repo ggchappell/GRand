@@ -232,10 +232,18 @@ private:
     IntType rand_integer(IntType n)
     {
         ck_seed();
+#ifdef __GNUC__
+// g++ 4.7.* incorrectly gives conversion warnings when IntType is short
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#endif
         return std::uniform_int_distribution<IntType>(
             IntType(0),
             n-IntType(1))
                 (_rng);
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
     }
 
     // ck_seed
