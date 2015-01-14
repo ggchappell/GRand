@@ -12,6 +12,9 @@
 // Intended for simple pseudorandom number generation, or as sample
 // code. Not for cryptographic use.
 
+// Copyright (c) 2014-2015 Glenn G. Chappell
+// License: MIT. See LICENSE or <http://opensource.org/licenses/MIT>.
+
 /*
 
 EXAMPLE USAGE
