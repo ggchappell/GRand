@@ -1,7 +1,7 @@
 GRand
 =====
 
-Version 1.1.2
+Version 1.1.3
 
 GRand (say Gee-Rand) is a C++ random-number-generation library with a
 simple, easy-to-use interface.
@@ -12,7 +12,8 @@ Features
 --------
 
 * Very easy to use.
-* High-quality random numbers (uses 32-bit Mersenne Twister: MT19937).
+* High-quality random numbers (uses 32-bit Mersenne Twister engine:
+  MT19937).
 * Generate uniformly distributed integers and floating-point values, and
   boolean values with specified probabilities.
 * Interoperable with C++ Standard Library random-number facilities.
