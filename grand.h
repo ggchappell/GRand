@@ -1,7 +1,7 @@
 // grand.h
-// VERSION 1.1.2
+// VERSION 1.1.3 (UNFINISHED)
 // Glenn G. Chappell
-// 14 Jan 2015
+// 19 Jan 2015
 //
 // Header for class GRand
 // Allows easy pseudorandom number generation
@@ -61,7 +61,7 @@ EXAMPLE USAGE
 
 // Version number
 // Guaranteed to increase with with each release.
-#define GRAND_PACKAGE_VERSION (10102)  // 1 01 02 means 1.1.2
+#define GRAND_PACKAGE_VERSION (10103)  // 1 01 03 means 1.1.3
 
 
 // class GRand
@@ -137,15 +137,15 @@ public:
     }
 
     // i
-    // Return random integer in range [0, n-1], or 0 if n <= 0. Range is
-    //  {0, 1} if no parameter given.
+    // Return uniformly distributed random integer in range [0, n-1], or
+    //  0 if n <= 0. Range is {0, 1} if no parameter given.
     int i(int n=2)
     { return (n <= 1) ? 0 : rand_integer(n); }
 
     // d
-    // Return random double in range [0.0, d) if d > 0.0, in range
-    //  (d, 0.0] if d < 0.0, or 0.0 if d == 0.0. Range is [0.0, 1.0) if
-    //  no parameter given.
+    // Return uniformly distributed random double in range [0.0, d) if
+    //  d > 0.0, in range (d, 0.0] if d < 0.0, or 0.0 if d == 0.0. Range
+    //  is [0.0, 1.0) if no parameter given.
     double d(double d=1.0)
     {
         ck_seed();
@@ -174,7 +174,7 @@ public:
     // An object of type GRand meets the requirements for Uniform Random
     // Number Generator (C++11 26.5.1.3). An object of type GRand may be
     // passed as the third argument to std::shuffle (C++11 25.3.12) --
-    // as long as rng_type::result_type is convertible to
+    // as long as result_type is convertible to
     // iterator_traits<RandomAccessIterator>::difference_type, where
     // RandomAccessIterator is the type of the first two arguments of
     // std::shuffle (i.e., pretty much always).
@@ -194,7 +194,8 @@ public:
     { return rng_type::max(); }
 
     // operator() - no arguments
-    // Return random value of type result_type, in range [min(), max()].
+    // Return uniformly distributed random value of type result_type, in
+    //  range [min(), max()].
     result_type operator()()
     {
         ck_seed();
@@ -202,10 +203,15 @@ public:
     }
 
     // An object of type GRand may be passed as the third argument to
-    // std::random_shuffle (C++11 25.3.12).
+    // std::random_shuffle (C++11 25.3.12) -- as long as
+    // iterator_traits<RandomAccessIterator>::difference_type and
+    // unsigned long long are each convertible to the other, where
+    // RandomAccessIterator is the type of the first two arguments of
+    // std::random_shuffle (i.e., pretty much always).
 
     // operator() - one argument
-    // Return random integer in range [0, n-1], or 0 if n <= 0.
+    // Return random integer in range [0, n-1], or 0 if n <= 0. Result
+    //  is uniformly distributed if n <= ULLONG_MAX.
     // Requirements on Types:
     //     IntType must be copy constructible.
     //     IntType must be convertible to unsigned long long.
@@ -245,7 +251,7 @@ public:
 private:
 
     // rand_integer
-    // Return random integer in range [0, n-1].
+    // Return uniformly distributed random integer in range [0, n-1].
     // Pre:
     //     n >= 2.
     // Requirements on Types:
