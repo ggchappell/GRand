@@ -1,7 +1,7 @@
 GRand
 =====
 
-Version 1.1.3
+Version 1.1.4
 
 GRand (say Gee-Rand) is a C++ random-number-generation library with a
 simple, easy-to-use interface.
