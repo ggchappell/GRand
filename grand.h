@@ -1,5 +1,5 @@
 // grand.h
-// VERSION 1.1.4 (UNFINISHED)
+// VERSION 1.1.4
 // Glenn G. Chappell
 // 3 May 2015
 //
