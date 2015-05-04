@@ -1,7 +1,7 @@
 // grand.h
-// VERSION 1.1.3
+// VERSION 1.1.4 (UNFINISHED)
 // Glenn G. Chappell
-// 19 Jan 2015
+// 3 May 2015
 //
 // Header for class GRand
 // Allows easy pseudorandom number generation
@@ -61,7 +61,7 @@ EXAMPLE USAGE
 
 // Version number
 // Guaranteed to increase with with each release.
-#define GRAND_PACKAGE_VERSION (10103)  // 1 01 03 means 1.1.3
+#define GRAND_PACKAGE_VERSION (10104)  // 1 01 04 means 1.1.4
 
 
 // class GRand
@@ -234,14 +234,14 @@ public:
         typedef typename
             std::common_type<IntType, unsigned long long>::type TT;
         // Explicit type promotion avoids signed/unsigned warnings.
-        if (TT(n) <= TT(std::numeric_limits<unsigned long long>::max))
+        if (TT(n) <= TT(std::numeric_limits<unsigned long long>::max()))
             // Above is correct for signed or unsigned n, since n > 0.
             return IntType(rand_integer((unsigned long long)(n)));
         else
             // If n is too big for (unsigned long long), we do the best
             //  we can.
             return IntType(rand_integer(
-                std::numeric_limits<unsigned long long>::max));
+                std::numeric_limits<unsigned long long>::max()));
     }
 
     // NOTE: An object of type GRand does NOT meet the requirements for
