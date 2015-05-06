@@ -1,7 +1,7 @@
 // grand.h
-// VERSION 1.1.4
+// VERSION 1.1.5 (UNFINISHED)
 // Glenn G. Chappell
-// 3 May 2015
+// 5 May 2015
 //
 // Header for class GRand
 // Allows easy pseudorandom number generation
@@ -61,8 +61,18 @@ EXAMPLE USAGE
 
 // Version number
 // Guaranteed to increase with with each release.
-#define GRAND_PACKAGE_VERSION (10104)  // 1 01 04 means 1.1.4
+#define GRAND_PACKAGE_VERSION (10105)  // 1 01 05 means 1.1.5
 
+// Handle varying support for constexpr
+// As of Visual C++ 2013, no version of VC++ supports constexpr.
+// Preprocessor constant GRAND_CONSTEXPR is defined to be "" in Visual
+// C++ and "constexpr" in other compilers. This constant is for internal
+// use only; it is #undef'd at the end of this file.
+#ifndef _MSC_VER
+# define GRAND_CONSTEXPR constexpr
+#else
+# define GRAND_CONSTEXPR
+#endif
 
 // class GRand
 // Good random number generation
@@ -183,14 +193,21 @@ public:
     // Return type of operator() - no parameters.
     typedef rng_type::result_type result_type;
 
+    // min & max: The C++ Standard Library shipped with Xcode 6.3
+    // requires these member functions to be constexpr in a Uniform
+    // Random Number Generator object. The C++11 Standard does not
+    // require this, but it does not hurt -- except that Visual C++
+    // currently does not support constexpr at all. So we do a bit of
+    // system-dependent preprocessor stuff to make it all work.
+
     // min
     // Minimum return value of operator() - no parameters.
-    static result_type min()
+    static GRAND_CONSTEXPR result_type min()
     { return rng_type::min(); }
 
     // max
     // Maximum return value of operator() - no parameters.
-    static result_type max()
+    static GRAND_CONSTEXPR result_type max()
     { return rng_type::max(); }
 
     // operator() - no arguments
@@ -308,6 +325,7 @@ private:
 
 // Undefine internal-use-only preprocessor symbols
 #undef GRAND_OP_PAREN
+#undef GRAND_CONSTEXPR
 
 #endif //#ifndef FILE_GRAND_H_INCLUDED
 
