@@ -233,21 +233,11 @@ public:
     //     IntType must be copy constructible.
     //     IntType must be convertible to unsigned long long.
     //     unsigned long long must be convertible to IntType.
-#define GRAND_OP_PAREN(T) T operator()(T n) \
-{ return (n <= (T)(1)) ? (T)(0) : rand_integer(n); }
-        // GRAND_OP_PAREN is internal-use only; #undef'd at end of file
-    GRAND_OP_PAREN(short)
-    GRAND_OP_PAREN(int)
-    GRAND_OP_PAREN(long)
-    GRAND_OP_PAREN(long long)
-    GRAND_OP_PAREN(unsigned short)
-    GRAND_OP_PAREN(unsigned int)
-    GRAND_OP_PAREN(unsigned long)
-    GRAND_OP_PAREN(unsigned long long)
     template <typename IntType>
     IntType operator()(IntType n)
     {
-        if (n <= IntType(1)) return IntType(0);
+        if (n <= IntType(1ULL)) return IntType(0ULL);
+        // "ULL" in above line because of our requirements on types.
         typedef typename
             std::common_type<IntType, unsigned long long>::type TT;
         // Explicit type promotion avoids signed/unsigned warnings.
@@ -260,6 +250,19 @@ public:
             return IntType(rand_integer(
                 std::numeric_limits<unsigned long long>::max()));
     }
+    // Simpler non-template versions of operator()(n) for the 8
+    // fundamental types that rand_integer can take.
+#define GRAND_OP_PAREN(T) T operator()(T n) \
+    { return (n <= (T)(1)) ? (T)(0) : rand_integer(n); }
+        // GRAND_OP_PAREN is internal-use only; #undef'd at end of file
+    GRAND_OP_PAREN(short)
+    GRAND_OP_PAREN(int)
+    GRAND_OP_PAREN(long)
+    GRAND_OP_PAREN(long long)
+    GRAND_OP_PAREN(unsigned short)
+    GRAND_OP_PAREN(unsigned int)
+    GRAND_OP_PAREN(unsigned long)
+    GRAND_OP_PAREN(unsigned long long)
 
     // NOTE: An object of type GRand does NOT meet the requirements for
     // Random Number Engine (C++11 26.5.1.4).
